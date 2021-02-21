@@ -3,7 +3,7 @@
 
 //in the main cpp, when I wrote includes like
 // <<<#include "nonlinsolver/methods.h", <<<#include "lgmarkov/model.h"
-// pragma once did not stop a redifinition error for these i line functions below
+// pragma once did not stop a redifinition error for these inline functions below
 //howvere old style ifndef here solved the issue
 //but still a little discipline in the "#include"s, a clear head about
 //their hierarchy is good I think
@@ -16,9 +16,42 @@
 //#pragma once
 //#ifndef METHODS_H
 //#define METHODS_H 
+#include <assert.h>
 template<typename F>
 double inline bisectionMethod(const F& f, double a, double b, double tol)
 {
+    std::cout<<"methods.h: f(a) vs f(b): "<< a <<" "<<f(a) << " "<<b<<" "<<f(b) <<"\n";
+    assert(f(a)*f(b)<0.0);
+
+    double left  = a, right = b;
+    double mid = (left+right)/2;
+    double yleft = f(left);
+    double ymid = f(mid);
+    while(right- left> tol)
+    {
+        if((yleft >0 && ymid>0) || (yleft <0 && ymid<0) )
+        {
+            left = mid;
+            yleft = ymid;
+        }
+        else
+        {
+            right = mid;
+        }
+        mid = (left+right)/2;
+        ymid  = f(mid);
+        //cout<< "x: "<<mid<<"value: "<<ymid<<"\n";
+        
+    }
+    return mid;
+}
+
+template<typename F>
+double inline bisectionMethodNonConst(F& f, double a, double b, double tol)
+{
+    std::cout<<"methods.h: f(a) vs f(b): "<< a <<" "<<f(a) << " "<<b<<" "<<f(b) <<"\n";
+    assert(f(a)*f(b)<0.0);
+
     double left  = a, right = b;
     double mid = (left+right)/2;
     double yleft = f(left);
